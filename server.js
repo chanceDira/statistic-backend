@@ -1,41 +1,79 @@
-// import { PrismaClient, prismaClient } from '@prisma/client';
-// import pkg from '@prisma/client';
-// const { PrismaClient, prismaClient } = pkg;
 
-// const prisma = new PrismaClient({ datasources: {  db: { url: "mongodb+srv://chanceDira:Ilikediliked1@cluster0.6yhcfzz.mongodb.net/?retryWrites=true&w=majority" } } });
+// import { PrismaClient } from '@prisma/client'
 
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
-
-async function main() {
-    const country = await prisma.country.create({
-        data: {
-            country: 'Burundi',
-            year: 2021,
-            area: 123456,
-            totalPopulation: 2000000
-        }
-    })
-    console.log(country)
-}
-
-main();
+// const prisma = new PrismaClient()
 
 // async function main() {
-//     // Connect the client
-//     await prisma.$connect()
-//     // ... you will write your Prisma Client queries here
-//     const allCountries = await prisma.country.findMany()
-//   console.log(allCountries)
+//     const country = await prisma.country.create({
+//         data: {
+//             country: 'Burundi',
+//             year: 2021,
+//             area: 123456,
+//             totalPopulation: 2000000
+//         }
+//     })
+//     console.log(country)
+// }
+
+// main();
+
+
+//2nd Option 
+
+// import { ApolloServer } from 'apollo-server'
+
+// // 1
+// const typeDefs = `
+//   type Query {
+//     info: String!
 //   }
-  
-//   main()
-//     .then(async () => {
-//       await prisma.$disconnect()
-//     })
-//     .catch(async (e) => {
-//       console.error(e)
-//       await prisma.$disconnect()
-//       process.exit(1)
-//     })
+// `
+
+// // 2
+// const resolvers = {
+//   Query: {
+//     info: () => null
+//   }
+// }
+
+// // 3
+// const server = new ApolloServer({
+//   typeDefs,
+//   resolvers,
+// })
+
+// server
+//   .listen()
+//   .then(({ url }) =>
+//     console.log(`Server is running on ${url}`)
+//   );
+
+import express from 'express'
+import { ApolloServer, gql } from'apollo-server-express'
+import typeDefs from './typeDefs.js'
+import resolvers from './resolvers.js'
+
+
+
+
+
+async function startServer() {
+  const app = express()
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers
+  })
+
+  await apolloServer.start()
+
+  apolloServer.applyMiddleware({ app: app })
+
+  app.use((req, res) => {
+    res.send('Hello from express apollo server')
+  })
+
+  app.listen(4000, () => console.log('Server in running on port 4000'))
+
+}
+
+startServer()
